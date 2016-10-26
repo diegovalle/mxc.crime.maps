@@ -146,6 +146,7 @@ draw_gmap(sector.map, "ROBO A TRANSEUNTE C.V.", bb.sector, "Greys", "rate")
 
 draw_gmap(cuadrante.map, "ROBO DE VEHICULO AUTOMOTOR S.V.", bb.sector, "YlGn", "count")
 draw_gmap(cuadrante.map, "ROBO DE VEHICULO AUTOMOTOR C.V.", bb.sector, "Greens", "count")
+draw_gmap(cuadrante.map, "LESIONES POR ARMA DE FUEGO", bb.sector, "Greys", "count")
 draw_gmap(cuadrante.map, "HOMICIDIO DOLOSO", bb.sector, "Reds", "count")
 
 
@@ -263,7 +264,7 @@ cuadrantes.f <- fortify(cuadrantes, region = "cuadrante")
 cuadrantes.f <- merge(cuadrantes.f, hom, by.x = "id", by.y = "cuadrante")
 
 ggplot(cuadrantes.f, aes(long, lat, group = group)) +
-  geom_polygon(aes(fill = smooth)) +
+  geom_polygon(aes(fill = smooth), color = "#555555", size = .1) +
   coord_map()+
   scale_fill_gradientn(colours=rev(brewer.pal(9,"YlOrRd"))) +
   theme_nothing(legend = TRUE) +
@@ -296,7 +297,7 @@ cuadrantes.f <- fortify(cuadrantes, region = "cuadrante")
 cuadrantes.f <- merge(cuadrantes.f, hom, by.x = "id", by.y = "cuadrante")
 
 ggplot(cuadrantes.f, aes(long, lat, group = group)) +
-  geom_polygon(aes(fill = smooth)) +
+  geom_polygon(aes(fill = smooth), color = "#555555", size = .1) +
   coord_map()+
   scale_fill_gradientn(colours=rev(brewer.pal(9,"YlOrRd"))) +
   theme_nothing(legend = TRUE) +
@@ -340,7 +341,7 @@ cuad_smooth_rvsv <- smooth_cuads(fromJSON("https://hoyodecrimen.com/api/v1/cuadr
              cuad.nb)
 
 ggplot(cuad_smooth_rvsv, aes(long, lat, group = group)) +
-  geom_polygon(aes(fill = smooth)) +
+  geom_polygon(aes(fill = smooth), color = "#555555", size = .1) +
   coord_map()+
   scale_fill_gradientn(colours=rev(brewer.pal(9,"YlGn"))) +
   theme_nothing(legend = TRUE) +
@@ -350,7 +351,7 @@ cuad_smooth_rvcv <- smooth_cuads(fromJSON("https://hoyodecrimen.com/api/v1/cuadr
              cuad.nb)
 
 ggplot(cuad_smooth_rvcv, aes(long, lat, group = group)) +
-  geom_polygon(aes(fill = smooth)) +
+  geom_polygon(aes(fill = smooth), color = "#555555", size = .1) +
   coord_map() +
   scale_fill_gradientn(colours=rev(brewer.pal(9,"BuGn"))) +
   theme_nothing(legend = TRUE) +
@@ -360,7 +361,7 @@ cuad_smooth_rt <- smooth_cuads(fromJSON("https://hoyodecrimen.com/api/v1/cuadran
              cuad.nb)
 
 ggplot(cuad_smooth_rt, aes(long, lat, group = group)) +
-  geom_polygon(aes(fill = smooth)) +
+  geom_polygon(aes(fill = smooth), color = "#555555", size = .1) +
   coord_map() +
   scale_fill_gradientn(colours=rev(brewer.pal(9,"Blues")))+
   theme_nothing(legend = TRUE) +
@@ -452,8 +453,6 @@ stations <- read.csv("data/stations.csv") %>%
   rename(line = styleUrl) %>%
   mutate(line = str_replace(line, "#Line", "LÍNEA "))
 df <- full_join(stations, afluencia, by = c("name", "line"))
-df <- merge(stations, afluencia, all = TRUE)
-
 
 nrow(df[is.na(df$X) | is.na(df$num),]) == 0
 ```

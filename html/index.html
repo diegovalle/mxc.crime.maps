@@ -1,0 +1,147 @@
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.0.1/dist/leaflet.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.2.7/d3.js"></script>
+        <title>
+           Crime by metro station
+        </title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <style>
+         body {
+             padding: 0;
+             margin: 0;
+         }
+         html, body, #map {
+             height: 100%;
+             width: 100%;
+         }
+         .info { padding: 6px 8px; font: 14px/16px Arial, Helvetica, sans-serif; background: white; background: rgba(255,255,255,1); box-shadow: 0 0 15px rgba(0,0,0,0.2); border-radius: 5px; } .info h4 { margin: 0 0 5px; color: #777; }
+         .legend { text-align: left; line-height: 18px; color: #555; } .legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.9; }
+        </style>
+    </head>
+    <body class="no-sidebar">
+
+        <div id="map"></div>
+
+        <script>
+         comma = d3.format(',');
+         function highlightFeature(e) {
+             var layer = e.target;
+
+             layer.setStyle({
+                 weight: 5,
+                 color: '#666',
+                 dashArray: '',
+                 fillOpacity: 0.7
+             });
+
+             if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                 layer.bringToFront();
+             }
+
+             //info.update(layer.feature.properties);
+         }
+         function resetHighlight(e) {
+             geojson.resetStyle(e.target);
+             //info.update();
+         }
+         function onEachFeature(feature, layer) {
+             layer.bindPopup(String('<h2 style="text-transform:capitalize">' + feature.properties.name + '</h2>' + '<br>afluencia: <b>' +
+            comma(feature.properties.sum) + '</b><br> crímenes: <b>' +
+            comma(feature.properties.count) + '</b><br> tasa: <b>' + Math.round(feature.properties.rate) + '</b>'
+        ));
+             layer.on({
+                 mouseover: highlightFeature,
+                 mouseout: resetHighlight,
+             });
+         }
+         var getColor = d3.scaleLinear()
+                       .domain([0, 10.5])
+                          .range(["#ffffe5","#662506"]);
+         function style(feature) {
+             return {
+                 weight: 2,
+                 opacity: 1,
+                 color: 'black',
+                 //dashArray: '3',
+                 fillOpacity: 0.8,
+                 fillColor: getColor(feature.properties.rate)
+             };
+         }
+
+         var map = L.map('map').setView([19.423639, -99.143076], 13);
+         L.tileLayer('http://{s}.tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey={apikey}', {
+	     attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+	     maxZoom: 19,
+	     apikey: 'b0ba23bd00dd483fa3e5e6c6c2afe6d2'
+         }).addTo(map);
+         d3.json("stations.geojson", function(data) {
+             geojson = L.geoJson(data, {
+                 style: style,
+                 onEachFeature: onEachFeature
+             }).addTo(map);
+         });
+
+         var legend = L.control({position: 'bottomright'});
+
+         legend.onAdd = function (map) {
+
+             var div = L.DomUtil.create('div', 'info legend'),
+                 grades = [1.8432457125, 3.686491425, 5.5297371375,
+                           7.37298285, 9.2162285625,
+                           11.059474275, 12.9027199875, 14.7459657],
+                 labels = [];
+             div.innerHTML = 'rate <br>';
+             // loop through our density intervals and generate a label with a colored square for each interval
+             /* for (var i = 0; i < grades.length; i++) {
+              *     div.innerHTML +=
+              *         '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
+              *         Math.round(grades[i]*10)/10 + (grades[i + 1] ? '&ndash;' + Math.round(grades[i + 1]*10)/10 + '<br>' : '+');
+              * }*/
+
+             return div;
+         };
+
+         legend.addTo(map);
+
+         var w = 40; var h = 164;
+
+	 var key = d3.select(".info").append("svg").attr("width", w).attr("height", h);
+
+	 var legend = key.append("defs").append("svg:linearGradient").attr("id", "gradient").attr("x1", "100%").attr("y1", "0%").attr("x2", "100%").attr("y2", "100%").attr("spreadMethod", "pad");
+
+	 legend.append("stop").attr("offset", "0%").attr("stop-color", "#ffffe5").attr("stop-opacity", 1);
+
+	 legend.append("stop").attr("offset", "100%").attr("stop-color", "#662506").attr("stop-opacity", 1);
+
+	 key.append("rect").attr("width", w/2).attr("height", h).style("fill", "url(#gradient)").attr("transform", "translate(0,10)");
+
+	 var y = d3.scaleLinear().range([0, 150]).domain([0, 15]);
+
+	 var yAxis = d3.axisRight(y);
+
+	 key.append("g").attr("class", "y axis").attr("transform", "translate(21,10)")
+            .call(yAxis).append("text").attr("transform", "rotate(-90)").attr("y", 10)
+            .attr("dy", ".71em").style("text-anchor", "end").text("axis title");
+
+
+
+         var info = L.control();
+
+         info.onAdd = function (map) {
+             this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+             this.update();
+             return this._div;
+         };
+
+         // method that we will use to update the control based on feature properties passed
+         info.update = function (props) {
+             this._div.innerHTML = '<h4>Crime by metro station</h4>';
+         };
+
+         info.addTo(map);
+        </script>
+    </body>
+</html>

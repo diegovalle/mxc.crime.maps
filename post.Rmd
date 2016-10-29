@@ -92,13 +92,18 @@ and
 which we can convert to SpatialPolygonsDataFrame to work with in R.
 
 ```{r geojson, warning=FALSE,message=FALSE}
+# create a tempory to save the geojson from the API
 tmp_cuadrantes = tempfile("cuads", fileext = ".json")
 download("https://hoyodecrimen.com/api/v1/cuadrantes/geojson", tmp_cuadrantes)
+# read the geojson into a spatial object
 cuadrantes = readOGR(tmp_cuadrantes, "OGRGeoJSON", verbose = FALSE)
 
 tmp_sectores = tempfile("secs", fileext = ".json")
 download("https://hoyodecrimen.com/api/v1/sectores/geojson", tmp_sectores)
 sectores = readOGR(tmp_sectores, "OGRGeoJSON", verbose = FALSE)
+
+plot(cuadrantes, main = cuadrantes)
+plot(sectores, main = sectores)
 ```
 
 ## II.
@@ -243,7 +248,7 @@ bayes smoothing.
 
 ```{r, warning=FALSE,message=FALSE}
 
-cuad.nb <- poly2nb(cuadrantes, row.names = as.character(cuadrantes$cuadrante))
+
 hom <- fromJSON(str_c("https://hoyodecrimen.com",
                       URLencode("/api/v1/cuadrantes/ALL/crimes/HOMICIDIO DOLOSO/period")))$rows
 hom <- subset(hom, cuadrante != "(NO ESPECIFICADO)")
@@ -287,6 +292,9 @@ cuadrante with the nearest, say, 8 neighbors.
 ```{r}
 cuad.nb <- knn2nb(knearneigh(coordinates(cuadrantes), k = 8), 
                   row.names = as.character(cuadrantes$cuadrante))
+#cuad.nb <- poly2nb(cuadrantes, row.names = as.character(cuadrantes$cuadrante))
+plot(cuad.nb, coordinates(cuadrantes), main = "Plot of cuadrante neighbors")
+
 hom$smooth <- sapply(1:nrow(hom), function(x) {
   w <-  c(hom$population[x], hom$population[cuad.nb[[x]]])
   r <- c(hom$rate[x], hom$rate[cuad.nb[[x]]])

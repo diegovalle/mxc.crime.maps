@@ -102,8 +102,8 @@ tmp_sectores = tempfile("secs", fileext = ".json")
 download("https://hoyodecrimen.com/api/v1/sectores/geojson", tmp_sectores)
 sectores = readOGR(tmp_sectores, "OGRGeoJSON", verbose = FALSE)
 
-plot(cuadrantes, main = cuadrantes)
-plot(sectores, main = sectores)
+plot(cuadrantes, main = "cuadrantes")
+plot(sectores, main = "sectores")
 ```
 
 ## II.

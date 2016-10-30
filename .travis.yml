@@ -1,29 +1,5 @@
 language: r
 cache: packages
-r_packages:
-  - DCluster
-  - jsonlite
-  - RCurl
-  - jsonlite
-  - rgdal
-  - rgeos
-  - ggplot2
-  - ggmap
-  - RColorBrewer
-  - stringr
-  - scales
-  - geojsonio
-  - downloader
-  - spdep
-  - viridis
-  - maptools
-  - rvest
-  - dplyr
-  - stringr
-  - stringi
-  - geojsonio
-  - knitr
-
 addons:
    apt:
      packages:
@@ -31,6 +7,35 @@ addons:
        - libxml2-dev
        - libv8-dev
 
+install:
+  - Rscript -e 'install.packages(c("devtools", "DCluster",
+                                 "jsonlite",
+                                 "RCurl",
+                                 "jsonlite",
+                                 "rgdal",
+                                 "rgeos",
+                                 "ggplot2",
+                                 "ggmap",
+                                 "RColorBrewer",
+                                 "stringr",
+                                 "scales",
+                                 "geojsonio",
+                                 "downloader",
+                                 "spdep",
+                                 "viridis",
+                                 "maptools",
+                                 "rvest",
+                                 "dplyr",
+                                 "stringr",
+                                 "stringi",
+                                 "geojsonio",
+                                 "knitr")'
+
+
 script:
   - Rscript -e "library(knitr); knit('post.Rmd')" 
+
+after_script:
+  - echo "Session info:"
+  - Rscript -e "devtools::session_info()"
 

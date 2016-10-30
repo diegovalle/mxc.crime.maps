@@ -31,6 +31,6 @@ addons:
        - libxml2-dev
        - libv8-dev
 
-install:
+script:
   - Rscript -e "library(knitr); knit('post.Rmd')" 
 

@@ -7,30 +7,31 @@ addons:
        - libxml2-dev
        - libv8-dev
 
-r_packages:
-  - DCluster
-  - jsonlite
-  - RCurl
-  - jsonlite
-  - rgdal
-  - rgeos
-  - ggplot2
-  - ggmap
-  - RColorBrewer
-  - stringr
-  - scales
-  - geojsonio
-  - downloader
-  - spdep
-  - viridis
-  - maptools
-  - rvest
-  - dplyr
-  - stringr
-  - stringi
-  - geojsonio
-  - knitr
+before_install:
+  r_packages:
+    - DCluster
+    - jsonlite
+    - RCurl
+    - jsonlite
+    - rgdal
+    - rgeos
+    - ggplot2
+    - ggmap
+    - RColorBrewer
+    - stringr
+    - scales
+    - geojsonio
+    - downloader
+    - spdep
+    - viridis
+    - maptools
+    - rvest
+    - dplyr
+    - stringr
+    - stringi
+    - geojsonio
+    - knitr
 
 install:
-  - Rscript -e "library(knitr); stitch('post.Rmd')" 
+  - Rscript -e "library(knitr); knit('post.Rmd')" 
 

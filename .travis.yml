@@ -29,7 +29,7 @@ install:
                                  "stringr",
                                  "stringi",
                                  "geojsonio",
-                                 "knitr")'
+                                 "knitr"))'
 
 
 script:

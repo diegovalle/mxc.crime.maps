@@ -247,7 +247,7 @@ risk in each cuadrante we are going to smooth the rate using empirical
 bayes smoothing.
 
 ```{r, warning=FALSE,message=FALSE}
-
+cuad.nb <- poly2nb(cuadrantes, row.names = as.character(cuadrantes$cuadrante))
 
 hom <- fromJSON(str_c("https://hoyodecrimen.com",
                       URLencode("/api/v1/cuadrantes/ALL/crimes/HOMICIDIO DOLOSO/period")))$rows
@@ -577,4 +577,3 @@ There's still a problem in that the crimes may be systematically biased since th
 reporting rate is so low in Mexico.
 
 You can view an interactive version [here](https://www.diegovalle.net/maps/metro/)
-
